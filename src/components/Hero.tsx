@@ -44,7 +44,7 @@ export function Hero() {
           <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-secondary/14 to-transparent" />
           <div className="relative overflow-hidden rounded-[1.6rem] border border-white/10">
             <Image
-              src="/assets/images/hero-tech.svg"
+              src="/assets/images/hero-tech.png"
               alt="YSquared Services premium hero illustration"
               width={860}
               height={940}
