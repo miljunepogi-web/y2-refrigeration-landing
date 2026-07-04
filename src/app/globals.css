@@ -1,0 +1,127 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-manrope);
+  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-sora);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 6px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 8px);
+}
+
+:root {
+  --background: #081227;
+  --foreground: #f7f7fb;
+  --card: rgba(11, 23, 54, 0.72);
+  --card-foreground: #f7f7fb;
+  --popover: #112047;
+  --popover-foreground: #f7f7fb;
+  --primary: #d9a441;
+  --primary-foreground: #0b1736;
+  --secondary: #3a8dff;
+  --secondary-foreground: #f7f7fb;
+  --muted: rgba(138, 160, 201, 0.14);
+  --muted-foreground: #9fb0d1;
+  --accent: #12234e;
+  --accent-foreground: #f7f7fb;
+  --destructive: #ff7b7b;
+  --border: rgba(151, 180, 236, 0.16);
+  --input: rgba(14, 31, 68, 0.85);
+  --ring: rgba(58, 141, 255, 0.45);
+  --radius: 1.25rem;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background:
+    radial-gradient(circle at top left, rgba(58, 141, 255, 0.16), transparent 28%),
+    radial-gradient(circle at top right, rgba(217, 164, 65, 0.12), transparent 25%),
+    linear-gradient(180deg, #071124 0%, #081227 30%, #0b1736 100%);
+  color: var(--foreground);
+  font-family: var(--font-manrope), sans-serif;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply min-h-screen text-foreground antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-sora), sans-serif;
+    letter-spacing: -0.03em;
+  }
+}
+
+@utility section-shell {
+  @apply mx-auto w-full max-w-[1280px] px-4 sm:px-6 lg:px-8;
+}
+
+@utility glass-panel {
+  @apply border border-white/10 bg-white/5 backdrop-blur-xl;
+}
+
+@utility gold-ring {
+  box-shadow:
+    0 0 0 1px rgba(217, 164, 65, 0.26),
+    0 10px 30px rgba(3, 9, 26, 0.24);
+}
+
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.65), transparent 90%);
+}
+
+.text-gradient {
+  background: linear-gradient(180deg, #ffffff 0%, #d7e6ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.gold-gradient {
+  background: linear-gradient(135deg, #f3ca72 0%, #d9a441 44%, #b97e14 100%);
+}
+
+.blue-glow {
+  box-shadow:
+    0 0 0 1px rgba(58, 141, 255, 0.2),
+    0 12px 44px rgba(58, 141, 255, 0.18);
+}
