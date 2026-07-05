@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
 import { CalendarDays, MessageSquareMore, PhoneCall } from "lucide-react";
 import type { ReactNode } from "react";
 import { useState } from "react";
@@ -179,11 +180,13 @@ export function ContactForm() {
                 icon={<PhoneCall className="size-4 text-primary" />}
                 label="Call us"
                 value={siteConfig.phoneDisplay}
+                href={siteConfig.phoneHref}
               />
               <QuickContact
                 icon={<MessageSquareMore className="size-4 text-primary" />}
                 label="Messenger"
-                value="Fast social replies"
+                value={siteConfig.messengerDisplay}
+                href={siteConfig.messengerUrl}
               />
               <QuickContact
                 icon={<CalendarDays className="size-4 text-primary" />}
@@ -222,18 +225,30 @@ function QuickContact({
   icon,
   label,
   value,
+  href,
 }: {
   icon: React.ReactNode;
   label: string;
   value: string;
+  href?: string;
 }) {
-  return (
-    <div className="rounded-[1.3rem] border border-white/8 bg-white/[0.03] p-4">
+  const content = (
+    <div className="rounded-[1.3rem] border border-white/8 bg-white/[0.03] p-4 transition-colors hover:border-primary/25 hover:bg-white/[0.05]">
       <div className="flex items-center gap-2">
         {icon}
         <p className="text-sm font-medium text-white">{label}</p>
       </div>
       <p className="mt-2 text-sm text-[#9fb0d1]">{value}</p>
     </div>
+  );
+
+  if (!href) {
+    return content;
+  }
+
+  return (
+    <Link href={href} target="_blank" rel="noreferrer">
+      {content}
+    </Link>
   );
 }
