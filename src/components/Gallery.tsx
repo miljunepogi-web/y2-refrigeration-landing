@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { BeforeAfterSlider } from "@/components/BeforeAfterSlider";
 import { Reveal } from "@/components/motion/Reveal";
 import { SectionTitle } from "@/components/SectionTitle";
 import { galleryItems } from "@/lib/content";
@@ -18,17 +19,15 @@ export function Gallery() {
         <div className="mt-14 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
           <Reveal>
             <article className="glass-panel overflow-hidden rounded-[2rem] p-4">
-              <div className="overflow-hidden rounded-[1.5rem] border border-white/10">
-                <Image
-                  src={galleryItems[0].image}
-                  alt={galleryItems[0].title}
-                  width={1200}
-                  height={860}
-                  loading="lazy"
-                  sizes="(max-width: 1024px) 100vw, 58vw"
-                  className="h-full w-full object-cover"
-                />
-              </div>
+              <BeforeAfterSlider
+                beforeSrc="/assets/images/dirty.png"
+                afterSrc="/assets/images/clean.png"
+                beforeLabel="Before Cleaning"
+                afterLabel="After Cleaning"
+                beforeHint="Clogged filters · Mold growth · Poor airflow"
+                afterHint="Spotless coils · Max airflow · Peak efficiency"
+                alt={galleryItems[0].title}
+              />
               <div className="px-2 pt-6 pb-2">
                 <h3 className="text-2xl font-semibold text-white">{galleryItems[0].title}</h3>
                 <p className="mt-3 max-w-2xl text-sm leading-7 text-[#9fb0d1]">

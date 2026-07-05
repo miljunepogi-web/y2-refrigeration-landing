@@ -34,6 +34,25 @@ npm.cmd run lint
 npm.cmd run build
 ```
 
+## Booking Webhook
+
+The contact form now posts to `POST /api/book-service`, which forwards submissions to your `n8n` webhook.
+
+Add this environment variable locally or in Vercel:
+
+```text
+N8N_WEBHOOK_URL=https://your-n8n-instance/webhook/ysquared-booking
+N8N_WEBHOOK_SECRET=replace-with-shared-secret
+```
+
+For local testing, create a `.env.local` file based on `.env.example`.
+
+Full flow reference:
+
+```text
+docs/n8n-booking-flow.md
+```
+
 ## Structure
 
 ```text

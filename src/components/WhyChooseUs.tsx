@@ -37,7 +37,7 @@ export function WhyChooseUs() {
             <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
               <div className="overflow-hidden rounded-[1.5rem] border border-white/10">
                 <Image
-                  src="/assets/images/why-strip.svg"
+                  src="/assets/images/why-strip.png"
                   alt="YSquared Services service proof collage"
                   width={960}
                   height={760}

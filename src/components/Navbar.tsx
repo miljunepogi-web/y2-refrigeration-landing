@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { Menu, PhoneCall } from "lucide-react";
 import { useState } from "react";
@@ -22,13 +23,18 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-[#081227]/78 backdrop-blur-2xl">
       <div className="section-shell flex h-20 items-center justify-between gap-6">
-        <Link href="#" className="flex items-center gap-4">
-          <div className="gold-gradient flex size-12 items-center justify-center rounded-full text-lg font-extrabold text-[#081227]">
-            Y<span className="-mt-2 text-[0.66em]">2</span>
-          </div>
+        <Link href="#" className="flex items-center gap-3">
+          <Image
+            src="/assets/images/logo.jpg"
+            alt={siteConfig.shortName}
+            width={244}
+            height={68}
+            priority
+            className="h-10 w-auto rounded-sm md:h-11 xl:h-12"
+          />
           <div>
-            <p className="text-base font-semibold text-white">{siteConfig.shortName}</p>
-            <p className="text-xs text-[#9fb0d1]">Airconditioning Services</p>
+            <p className="text-sm font-semibold text-white md:text-base">{siteConfig.shortName}</p>
+            <p className="text-[11px] text-[#9fb0d1] md:text-xs">Airconditioning Services</p>
           </div>
         </Link>
 

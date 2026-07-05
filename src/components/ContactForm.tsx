@@ -3,8 +3,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CalendarDays, MessageSquareMore, PhoneCall } from "lucide-react";
 import type { ReactNode } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { Reveal } from "@/components/motion/Reveal";
 import { SectionTitle } from "@/components/SectionTitle";
 import { Button } from "@/components/ui/button";
@@ -12,28 +12,20 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { airconTypes, contactHighlights, serviceOptions } from "@/lib/content";
+import { contactFormSchema, type ContactFormValues } from "@/lib/contact-schema";
 import { siteConfig } from "@/lib/site";
 
-const formSchema = z.object({
-  name: z.string().min(2, "Please enter your name."),
-  phone: z.string().min(7, "Please enter a valid phone number."),
-  address: z.string().min(4, "Please enter your address."),
-  airconType: z.string().min(1, "Please select an aircon type."),
-  serviceNeeded: z.string().min(1, "Please select a service."),
-  preferredDate: z.string().min(1, "Please choose a preferred date."),
-  message: z.string().min(10, "Please add a short service note."),
-});
-
-type FormValues = z.infer<typeof formSchema>;
-
 export function ContactForm() {
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
     setValue,
+    reset,
     formState: { errors, isSubmitSuccessful, isSubmitting },
-  } = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+  } = useForm<ContactFormValues>({
+    resolver: zodResolver(contactFormSchema),
     defaultValues: {
       name: "",
       phone: "",
@@ -45,8 +37,27 @@ export function ContactForm() {
     },
   });
 
-  const onSubmit = async () => {
-    await new Promise((resolve) => setTimeout(resolve, 900));
+  const onSubmit = async (values: ContactFormValues) => {
+    setSubmitError(null);
+    setSubmitSuccess(null);
+
+    const response = await fetch("/api/book-service", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(values),
+    });
+
+    const result = (await response.json().catch(() => null)) as { message?: string } | null;
+
+    if (!response.ok) {
+      setSubmitError(result?.message ?? "Unable to send your request right now. Please try again.");
+      return;
+    }
+
+    setSubmitSuccess(result?.message ?? "Booking request sent successfully.");
+    reset();
   };
 
   return (
@@ -151,9 +162,14 @@ export function ContactForm() {
                 </Button>
               </div>
 
-              {isSubmitSuccessful ? (
+              {submitSuccess && isSubmitSuccessful ? (
                 <div className="md:col-span-2 rounded-[1.4rem] border border-primary/20 bg-primary/10 p-4 text-sm text-[#f8e5b7]">
-                  Request received. Replace this temporary success state with your future webhook or CRM submission flow.
+                  {submitSuccess}
+                </div>
+              ) : null}
+              {submitError ? (
+                <div className="md:col-span-2 rounded-[1.4rem] border border-[#ffb3b3]/20 bg-[#3d1218]/60 p-4 text-sm text-[#ffd6d6]">
+                  {submitError}
                 </div>
               ) : null}
             </form>
