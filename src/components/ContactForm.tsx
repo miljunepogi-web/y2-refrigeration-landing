@@ -12,13 +12,22 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { airconTypes, contactHighlights, serviceOptions } from "@/lib/content";
+import {
+  airconTypes,
+  bookingSteps,
+  contactHighlights,
+  serviceOptions,
+  unitCountOptions,
+  urgencyOptions,
+} from "@/lib/content";
 import { contactFormSchema, type ContactFormValues } from "@/lib/contact-schema";
 import { siteConfig } from "@/lib/site";
 
 export function ContactForm() {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
+  const [urgency, setUrgency] = useState<(typeof urgencyOptions)[number]>(urgencyOptions[0]);
+  const [unitCount, setUnitCount] = useState<(typeof unitCountOptions)[number]>(unitCountOptions[0]);
   const {
     register,
     handleSubmit,
@@ -42,12 +51,25 @@ export function ContactForm() {
     setSubmitError(null);
     setSubmitSuccess(null);
 
+    const details = [
+      `Urgency: ${urgency}`,
+      `Unit count: ${unitCount}`,
+      values.message,
+    ]
+      .filter(Boolean)
+      .join("\n");
+
+    const payload: ContactFormValues = {
+      ...values,
+      message: details,
+    };
+
     const response = await fetch("/api/book-service", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(values),
+      body: JSON.stringify(payload),
     });
 
     const result = (await response.json().catch(() => null)) as { message?: string } | null;
@@ -59,6 +81,8 @@ export function ContactForm() {
 
     setSubmitSuccess(result?.message ?? "Booking request sent successfully.");
     reset();
+    setUrgency(urgencyOptions[0]);
+    setUnitCount(unitCountOptions[0]);
   };
 
   return (
@@ -69,7 +93,7 @@ export function ContactForm() {
             badge="Contact"
             align="left"
             title="Book a Service or Request a Free Quote"
-            description="This contact block is structured for real business use, with validated fields and room for future webhook, CRM, email, and scheduling integrations."
+            description="Send your unit details, location, and preferred schedule so we can respond faster with the right service recommendation."
           />
 
           <div className="mt-8 space-y-4">
@@ -90,6 +114,28 @@ export function ContactForm() {
               );
             })}
           </div>
+
+          <div className="mt-6 glass-panel rounded-[1.5rem] p-5">
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">
+              What Happens Next
+            </p>
+            <div className="mt-5 space-y-4">
+              {bookingSteps.map((step) => {
+                const Icon = step.icon;
+                return (
+                  <div key={step.title} className="flex items-start gap-4">
+                    <div className="mt-0.5 flex size-11 shrink-0 items-center justify-center rounded-2xl bg-white/6 text-primary">
+                      <Icon className="size-5" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-white">{step.title}</p>
+                      <p className="mt-1 text-sm leading-7 text-[#9fb0d1]">{step.description}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </Reveal>
 
         <Reveal delay={0.08}>
@@ -103,8 +149,20 @@ export function ContactForm() {
               <Field label="Phone" error={errors.phone?.message}>
                 <Input {...register("phone")} placeholder="09XXXXXXXXX" className="h-12 rounded-2xl border-white/10 bg-[#0d1f44]" />
               </Field>
-              <Field label="Address" error={errors.address?.message}>
-                <Input {...register("address")} placeholder="Street, barangay, city" className="h-12 rounded-2xl border-white/10 bg-[#0d1f44]" />
+              <Field
+                label="Address"
+                error={errors.address?.message}
+                className="md:col-span-2"
+              >
+                <Textarea
+                  {...register("address")}
+                  rows={3}
+                  placeholder="House/Unit No., Street, Barangay, City, Subdivision, Landmark"
+                  className="rounded-[1.4rem] border-white/10 bg-[#0d1f44] resize-none"
+                />
+                <span className="mt-2 block text-xs text-[#9fb0d1]">
+                  Add street, barangay, city, subdivision, and nearest landmark.
+                </span>
               </Field>
               <Field label="Aircon Type" error={errors.airconType?.message}>
                 <Select onValueChange={(value) => setValue("airconType", String(value), { shouldValidate: true })}>
@@ -134,6 +192,20 @@ export function ContactForm() {
                   </SelectContent>
                 </Select>
               </Field>
+              <Field label="Urgency">
+                <Select value={urgency} onValueChange={(value) => setUrgency(value as (typeof urgencyOptions)[number])}>
+                  <SelectTrigger className="h-12 rounded-2xl border-white/10 bg-[#0d1f44]">
+                    <SelectValue placeholder="Select urgency" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {urgencyOptions.map((option) => (
+                      <SelectItem key={option} value={option}>
+                        {option}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </Field>
               <Field label="Preferred Date" error={errors.preferredDate?.message}>
                 <div className="relative">
                   <CalendarDays className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-[#9fb0d1]" />
@@ -143,6 +215,20 @@ export function ContactForm() {
                     className="h-12 rounded-2xl border-white/10 bg-[#0d1f44] pl-11"
                   />
                 </div>
+              </Field>
+              <Field label="Estimated Unit Count">
+                <Select value={unitCount} onValueChange={(value) => setUnitCount(value as (typeof unitCountOptions)[number])}>
+                  <SelectTrigger className="h-12 rounded-2xl border-white/10 bg-[#0d1f44]">
+                    <SelectValue placeholder="How many units?" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {unitCountOptions.map((option) => (
+                      <SelectItem key={option} value={option}>
+                        {option}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </Field>
               <Field label="Message" error={errors.message?.message} className="md:col-span-2">
                 <Textarea

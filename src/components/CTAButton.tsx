@@ -18,10 +18,13 @@ export function CTAButton({
   className,
 }: CTAButtonProps) {
   const isPrimary = variant === "primary";
+  const isExternal = href.startsWith("http") || href.startsWith("tel:");
 
   return (
     <Link
       href={href}
+      target={isExternal ? "_blank" : undefined}
+      rel={isExternal ? "noreferrer" : undefined}
       className={cn(
         "inline-flex h-14 items-center justify-center gap-2 rounded-full px-7 text-base font-semibold transition-all duration-300 hover:-translate-y-0.5",
         isPrimary

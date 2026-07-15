@@ -74,7 +74,7 @@ export function Navbar() {
       <div
         className={cn(
           "overflow-hidden border-t border-white/8 transition-[max-height,opacity] duration-300 xl:hidden",
-          open ? "max-h-96 opacity-100" : "max-h-0 opacity-0",
+          open ? "max-h-[32rem] opacity-100" : "max-h-0 opacity-0",
         )}
       >
         <div className="section-shell flex flex-col gap-4 py-5">
@@ -88,7 +88,15 @@ export function Navbar() {
               {item.label}
             </Link>
           ))}
+          <Link
+            href={siteConfig.phoneHref}
+            className="flex items-center gap-2 text-base text-[#d2def8] transition hover:text-white"
+          >
+            <PhoneCall className="size-4 text-primary" />
+            {siteConfig.phoneDisplay}
+          </Link>
           <CTAButton href={siteConfig.bookingUrl} label="Book Cleaning Now" className="w-full" />
+          <CTAButton href={siteConfig.quoteUrl} label="Get Free Quote" variant="secondary" className="w-full" />
         </div>
       </div>
     </header>

@@ -9,7 +9,7 @@ export function Footer() {
         <div>
           <div className="flex items-center gap-4">
             <div className="gold-gradient flex size-11 items-center justify-center rounded-full text-base font-extrabold text-[#081227]">
-              Y²
+              Y2
             </div>
             <div>
               <p className="font-semibold text-white">{siteConfig.shortName}</p>
@@ -17,7 +17,7 @@ export function Footer() {
             </div>
           </div>
           <p className="mt-4 max-w-sm text-sm leading-7 text-[#9fb0d1]">
-            Premium aircon cleaning, repairs, and installation support across Cavite.
+            Premium aircon cleaning, repairs, installation, and preventive maintenance across Cavite.
           </p>
         </div>
 
@@ -34,22 +34,32 @@ export function Footer() {
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">Contact</p>
           <div className="mt-4 space-y-3 text-sm text-[#dce8ff]">
-            <div className="flex items-center gap-3">
+            <Link href={siteConfig.phoneHref} className="flex items-center gap-3 transition hover:text-white">
               <PhoneCall className="size-4 text-primary" />
               {siteConfig.phoneDisplay}
-            </div>
-            <div className="flex items-center gap-3">
+            </Link>
+            <Link href={`mailto:${siteConfig.email}`} className="flex items-center gap-3 transition hover:text-white">
               <Mail className="size-4 text-primary" />
               {siteConfig.email}
-            </div>
-            <div className="flex items-center gap-3">
+            </Link>
+            <Link
+              href={siteConfig.messengerUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-3 transition hover:text-white"
+            >
               <MessageCircleMore className="size-4 text-primary" />
-              Facebook / Messenger
-            </div>
-            <div className="flex items-center gap-3">
+              Chat on Messenger
+            </Link>
+            <Link
+              href={siteConfig.facebookPageUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-3 transition hover:text-white"
+            >
               <Camera className="size-4 text-primary" />
-              Visual service updates
-            </div>
+              Facebook Page Updates
+            </Link>
           </div>
         </div>
       </div>

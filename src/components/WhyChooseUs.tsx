@@ -13,7 +13,7 @@ export function WhyChooseUs() {
             badge="Why Choose Us"
             align="left"
             title="Built Around Trust, Fast Service, and Clear Workmanship"
-            description="The approved layout leans premium, so this section reinforces that with proof-driven cards, tidy presentation, and a visible checklist clients can trust."
+            description="We focus on clear diagnostics, careful workmanship, and dependable follow-through so customers know exactly what to expect from booking to turnover."
           />
 
           <div className="mt-8 grid gap-4 sm:grid-cols-2">

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { Reveal } from "@/components/motion/Reveal";
 import { SectionTitle } from "@/components/SectionTitle";
@@ -23,7 +24,7 @@ export function Services() {
             return (
               <Reveal key={service.title} delay={index * 0.06}>
                 <Card className="glass-panel group h-full rounded-[1.75rem] transition duration-300 hover:-translate-y-1.5 hover:border-primary/25 hover:bg-white/[0.075]">
-                  <CardContent className="p-7">
+                  <CardContent className="flex h-full flex-col p-7">
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex size-14 items-center justify-center rounded-2xl bg-primary/12 text-primary">
                         <Icon className="size-6" />
@@ -36,10 +37,13 @@ export function Services() {
                     </div>
                     <h3 className="mt-7 text-2xl font-semibold text-white">{service.title}</h3>
                     <p className="mt-4 text-base leading-7 text-[#9fb0d1]">{service.description}</p>
-                    <div className="mt-7 inline-flex items-center gap-2 text-sm font-medium text-[#dce8ff]">
-                      Learn more
+                    <Link
+                      href="#contact"
+                      className="mt-7 inline-flex items-center gap-2 text-sm font-medium text-[#dce8ff] transition hover:text-white"
+                    >
+                      Book this service
                       <ArrowUpRight className="size-4 transition group-hover:translate-x-1 group-hover:-translate-y-1" />
-                    </div>
+                    </Link>
                   </CardContent>
                 </Card>
               </Reveal>

@@ -17,7 +17,7 @@ export function FAQ() {
             badge="FAQ"
             align="left"
             title="Questions We Usually Answer Before a Booking"
-            description="A smooth accordion helps visitors move from uncertainty to action, especially when they are comparing service providers and response time."
+            description="These are the common questions customers ask before they confirm a schedule, request a quote, or compare service options."
           />
         </Reveal>
 

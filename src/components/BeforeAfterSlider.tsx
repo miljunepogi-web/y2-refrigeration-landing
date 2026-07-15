@@ -1,16 +1,28 @@
 "use client";
 
 import Image from "next/image";
-import { MoveHorizontal } from "lucide-react";
+import { Gauge, MoveHorizontal, Sparkles, Wind, Zap } from "lucide-react";
 import { useId, useState } from "react";
+
+const sliderFeatureIcons = {
+  gauge: Gauge,
+  sparkles: Sparkles,
+  wind: Wind,
+  zap: Zap,
+} as const;
+
+type SliderFeature = {
+  label: string;
+  icon: keyof typeof sliderFeatureIcons;
+};
 
 type BeforeAfterSliderProps = {
   beforeSrc: string;
   afterSrc: string;
   beforeLabel: string;
   afterLabel: string;
-  beforeHint: string;
-  afterHint: string;
+  beforeFeatures: SliderFeature[];
+  afterFeatures: SliderFeature[];
   alt: string;
 };
 
@@ -19,8 +31,8 @@ export function BeforeAfterSlider({
   afterSrc,
   beforeLabel,
   afterLabel,
-  beforeHint,
-  afterHint,
+  beforeFeatures,
+  afterFeatures,
   alt,
 }: BeforeAfterSliderProps) {
   const [position, setPosition] = useState(52);
@@ -37,17 +49,26 @@ export function BeforeAfterSlider({
           sizes="(max-width: 1024px) 100vw, 58vw"
           className="object-cover"
         />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-32 bg-gradient-to-t from-[#040a17]/88 via-[#040a17]/38 to-transparent" />
 
         <div
           className="pointer-events-none absolute inset-0 z-10"
           style={{ clipPath: `inset(0 0 0 ${position}%)` }}
         >
-          <div className="absolute top-5 right-5 rounded-full bg-[#18c67f] px-4 py-2 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(10,16,30,0.25)]">
+          <div className="absolute top-5 right-5 rounded-full bg-[#18c67f] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(10,16,30,0.25)]">
             {afterLabel}
           </div>
-          <p className="absolute right-5 bottom-4 max-w-[38%] text-right text-xs text-white/90 sm:text-sm">
-            {afterHint}
-          </p>
+          <div className="absolute right-5 bottom-3 flex max-w-[34%] flex-col gap-2 text-right">
+            {afterFeatures.map((feature) => {
+              const Icon = sliderFeatureIcons[feature.icon];
+              return (
+                <div key={feature.label} className="flex items-center justify-end gap-2 text-sm text-white">
+                  <Icon className="size-4 shrink-0 text-white" />
+                  <span className="leading-5">{feature.label}</span>
+                </div>
+              );
+            })}
+          </div>
         </div>
 
         <div
@@ -64,12 +85,20 @@ export function BeforeAfterSlider({
               className="object-cover"
             />
             <div className="pointer-events-none absolute inset-0 z-10">
-              <div className="absolute top-5 left-5 rounded-full bg-[#d91018] px-4 py-2 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(10,16,30,0.25)]">
+              <div className="absolute top-5 left-5 rounded-full bg-[#d91018] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(10,16,30,0.25)]">
                 {beforeLabel}
               </div>
-              <p className="absolute bottom-4 left-5 max-w-[38%] text-xs text-white/90 sm:text-sm">
-                {beforeHint}
-              </p>
+              <div className="absolute bottom-3 left-5 flex max-w-[34%] flex-col gap-2">
+                {beforeFeatures.map((feature) => {
+                  const Icon = sliderFeatureIcons[feature.icon];
+                  return (
+                    <div key={feature.label} className="flex items-center gap-2 text-sm text-white">
+                      <Icon className="size-4 shrink-0 text-white" />
+                      <span className="leading-5">{feature.label}</span>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>
@@ -85,8 +114,10 @@ export function BeforeAfterSlider({
           </div>
         </div>
 
-        <div className="pointer-events-none absolute right-5 bottom-4 left-5 z-10 flex items-end justify-center">
-          <p className="text-xs text-white/75 sm:text-sm">drag to compare</p>
+        <div className="pointer-events-none absolute inset-x-0 bottom-3 z-10 flex justify-center">
+          <p className="rounded-full bg-black/20 px-3 py-1 text-xs text-white/80 backdrop-blur-sm sm:text-sm">
+            drag to compare
+          </p>
         </div>
 
         <label htmlFor={sliderId} className="sr-only">

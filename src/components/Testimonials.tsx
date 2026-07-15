@@ -11,7 +11,7 @@ export function Testimonials() {
           <SectionTitle
             badge="Testimonials"
             title="Trusted by Cavite Customers Who Value Clean, Reliable Service"
-            description="Social proof matters on service businesses, so this section keeps the tone personal, local, and credibility-focused without feeling generic."
+            description="Real feedback from Cavite customers who booked cleaning, repair, and maintenance for their homes, offices, and rental units."
           />
         </Reveal>
 

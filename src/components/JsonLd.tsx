@@ -15,7 +15,7 @@ export function JsonLd() {
       addressCountry: "PH",
     },
     url: siteConfig.url,
-    sameAs: [siteConfig.messengerUrl],
+    sameAs: [siteConfig.facebookPageUrl, siteConfig.messengerUrl],
     serviceType: [
       "Aircon Cleaning",
       "Aircon Installation",

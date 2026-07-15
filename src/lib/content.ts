@@ -4,10 +4,13 @@ import {
   BadgeCheck,
   Building2,
   Clock3,
+  ClipboardList,
   Droplets,
   Flame,
   Gauge,
   MapPinned,
+  PhoneForwarded,
+  Send,
   ShieldCheck,
   Sparkles,
   TimerReset,
@@ -22,6 +25,12 @@ export type ServiceItem = {
 };
 
 export type FeatureItem = {
+  title: string;
+  description: string;
+  icon: LucideIcon;
+};
+
+export type BookingStep = {
   title: string;
   description: string;
   icon: LucideIcon;
@@ -148,7 +157,7 @@ export const pricingPlans: PricingPlan[] = [
 export const serviceAreas = [
   "Bacoor",
   "Imus",
-  "Dasmari\u00f1as",
+  "Dasmarinas",
   "General Trias",
   "Kawit",
   "Noveleta",
@@ -168,7 +177,7 @@ export const serviceAreas = [
   "Amadeo",
 ] as const;
 
-export const priorityAreas = new Set(["Bacoor", "Imus", "Dasmari\u00f1as", "General Trias", "Tagaytay"]);
+export const priorityAreas = new Set(["Bacoor", "Imus", "Dasmarinas", "General Trias", "Tagaytay"]);
 
 export const testimonialItems = [
   {
@@ -179,7 +188,7 @@ export const testimonialItems = [
   },
   {
     name: "Marco D.",
-    location: "Dasmari\u00f1as",
+    location: "Dasmarinas",
     quote:
       "Clean work, fair pricing, and no mess left behind. The premium cleaning package felt worth it.",
   },
@@ -252,3 +261,31 @@ export const contactHighlights = [
   { label: "Call availability", value: "Morning to evening", icon: Clock3 },
   { label: "Coverage", value: "Cavite-wide service", icon: MapPinned },
 ] as const;
+
+export const bookingSteps: BookingStep[] = [
+  {
+    title: "Send your booking details",
+    description: "Share your location, unit type, issue, and preferred schedule.",
+    icon: Send,
+  },
+  {
+    title: "We confirm the service plan",
+    description: "Our team reviews the request and replies with the right next step.",
+    icon: ClipboardList,
+  },
+  {
+    title: "Technician dispatch follows",
+    description: "For priority areas, same-day scheduling is available in many cases.",
+    icon: PhoneForwarded,
+  },
+] as const;
+
+export const urgencyOptions = [
+  "Routine booking",
+  "Same-day if possible",
+  "Urgent: not cooling",
+  "Urgent: leaking water",
+  "Urgent: no power",
+] as const;
+
+export const unitCountOptions = ["1 unit", "2 units", "3 units", "4+ units"] as const;

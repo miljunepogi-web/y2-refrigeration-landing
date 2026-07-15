@@ -54,16 +54,20 @@ export function Areas() {
               <div>
                 <p className="text-3xl font-semibold text-white">20 municipalities served</p>
                 <p className="mt-2 text-sm text-[#9fb0d1]">
-                  Designed as a visual proof block to avoid a flat chip-only layout.
+                  Residential and commercial bookings supported across key Cavite service areas.
                 </p>
               </div>
               <div className="glass-panel rounded-[1.3rem] p-4">
                 <p className="text-sm uppercase tracking-[0.18em] text-primary">Priority Areas</p>
-                <p className="mt-2 text-base text-[#dce8ff]">Bacoor, Imus, Dasmariñas, General Trias, Tagaytay</p>
+                <p className="mt-2 text-base text-[#dce8ff]">
+                  Bacoor, Imus, Dasmarinas, General Trias, Tagaytay
+                </p>
               </div>
               <div className="glass-panel rounded-[1.3rem] p-4">
                 <p className="text-sm uppercase tracking-[0.18em] text-primary">Availability</p>
-                <p className="mt-2 text-base text-[#dce8ff]">Same-day booking support in most high-demand locations</p>
+                <p className="mt-2 text-base text-[#dce8ff]">
+                  Same-day booking support in most high-demand locations
+                </p>
               </div>
             </div>
           </div>
