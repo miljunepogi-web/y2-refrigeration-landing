@@ -7,6 +7,8 @@ This project uses Supabase as the single source of truth for bookings.
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `SUPABASE_SERVICE_ROLE_KEY`
 
+`N8N_WEBHOOK_URL` remains supported only as a temporary fallback while Supabase is being configured. Once the Supabase variables are available, the app always writes to Supabase first.
+
 ## Tables
 
 - `customers`

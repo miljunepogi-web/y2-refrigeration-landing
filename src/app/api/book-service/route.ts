@@ -3,6 +3,9 @@ import { ZodError } from "zod";
 import { contactFormSchema, type ContactFormValues } from "@/lib/contact-schema";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 
+const legacyWebhookUrl = process.env.N8N_WEBHOOK_URL;
+const legacyWebhookSecret = process.env.N8N_WEBHOOK_SECRET;
+
 function buildNotes(values: ContactFormValues) {
   const notes = [values.additionalNotes, values.message].filter(Boolean).join("\n");
   return notes.trim();
@@ -14,6 +17,35 @@ function mapUnitCount(numberOfAircons?: number) {
   }
 
   return Math.max(1, Math.floor(numberOfAircons));
+}
+
+async function forwardToLegacyWebhook(payload: Record<string, unknown>) {
+  if (!legacyWebhookUrl) {
+    return NextResponse.json(
+      { message: "Booking storage is not configured yet. Add Supabase env vars in Vercel." },
+      { status: 503 },
+    );
+  }
+
+  const webhookResponse = await fetch(legacyWebhookUrl, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...(legacyWebhookSecret ? { "x-webhook-secret": legacyWebhookSecret } : {}),
+    },
+    body: JSON.stringify(payload),
+    signal: AbortSignal.timeout(15000),
+    cache: "no-store",
+  });
+
+  if (!webhookResponse.ok) {
+    return NextResponse.json(
+      { message: "Booking request failed. Please try again in a moment." },
+      { status: 502 },
+    );
+  }
+
+  return NextResponse.json({ message: "Booking request sent successfully." });
 }
 
 export async function POST(request: Request) {
@@ -38,10 +70,10 @@ export async function POST(request: Request) {
     };
 
     if (!supabaseAdmin) {
-      return NextResponse.json(
-        { message: "Booking storage is not configured yet. Add Supabase env vars in Vercel." },
-        { status: 503 },
-      );
+      return forwardToLegacyWebhook({
+        ...bookingPayload,
+        submittedAt: new Date().toISOString(),
+      });
     }
 
     const { data, error } = await supabaseAdmin.rpc("create_booking_request", {
