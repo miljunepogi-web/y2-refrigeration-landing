@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Camera, Mail, MessageCircleMore, PhoneCall } from "lucide-react";
+import { BrandMark } from "@/components/BrandMark";
 import { siteConfig } from "@/lib/site";
 
 export function Footer() {
@@ -7,15 +8,7 @@ export function Footer() {
     <footer className="border-t border-white/10 py-10 md:py-12">
       <div className="section-shell grid gap-10 md:grid-cols-3">
         <div>
-          <div className="flex items-center gap-4">
-            <div className="gold-gradient flex size-11 items-center justify-center rounded-full text-base font-extrabold text-[#081227]">
-              Y2
-            </div>
-            <div>
-              <p className="font-semibold text-white">{siteConfig.shortName}</p>
-              <p className="text-sm text-[#9fb0d1]">Airconditioning Services</p>
-            </div>
-          </div>
+          <BrandMark className="items-center gap-4" imageClassName="h-11 md:h-12 xl:h-12" />
           <p className="mt-4 max-w-sm text-sm leading-7 text-[#9fb0d1]">
             Premium aircon cleaning, repairs, installation, and preventive maintenance across Cavite.
           </p>

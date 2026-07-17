@@ -36,13 +36,13 @@ npm.cmd run build
 
 ## Booking Webhook
 
-The contact form now posts to `POST /api/book-service`, which forwards submissions to your `n8n` webhook.
+The contact form posts to `POST /api/book-service`. In production, this route writes the booking to Supabase first; n8n is triggered by a Supabase Database Webhook after the record is safely stored.
 
 Add this environment variable locally or in Vercel:
 
 ```text
-N8N_WEBHOOK_URL=https://your-n8n-instance/webhook/ysquared-booking
-N8N_WEBHOOK_SECRET=replace-with-shared-secret
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your-server-only-service-role-key
 ```
 
 For local testing, create a `.env.local` file based on `.env.example`.

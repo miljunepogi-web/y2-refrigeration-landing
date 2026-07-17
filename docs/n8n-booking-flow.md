@@ -1,57 +1,51 @@
-# n8n Booking Flow
+# YSquared Booking Automation
 
-## End-to-End Flow
-
-1. Visitor fills out the booking form on the landing page.
-2. The browser sends a `POST` request to `/api/book-service`.
-3. The Next.js route validates the payload with Zod.
-4. The route forwards the validated payload to your `n8n` webhook.
-5. `n8n` receives the booking data and can:
-   - send an email notification
-   - save the lead to Google Sheets
-   - notify Messenger/Telegram/Slack
-   - push the lead to a CRM
-6. The site shows success or error feedback to the visitor.
-
-## Payload Sent To n8n
-
-```json
-{
-  "name": "Juan Dela Cruz",
-  "phone": "09561234567",
-  "address": "Bacoor, Cavite",
-  "airconType": "Split Type",
-  "serviceNeeded": "Aircon Cleaning",
-  "preferredDate": "2026-07-10",
-  "message": "1 unit, weak airflow, prefers morning schedule.",
-  "source": "ysquared-landing-page",
-  "submittedAt": "2026-07-05T12:34:56.000Z"
-}
-```
-
-## Suggested n8n Workflow
-
-1. `Webhook` node
-   - Method: `POST`
-2. `Set` or `Edit Fields` node
-   - clean/rename fields if needed
-3. Optional branches:
-   - `Google Sheets` append row
-   - `Gmail` or email node
-   - `Telegram`, `Slack`, or Messenger-compatible relay
-   - CRM node or HTTP Request node
-4. `Respond to Webhook` node
-   - return `200 OK`
-
-## Environment Variables
+## Production data flow
 
 ```text
-N8N_WEBHOOK_URL=https://your-n8n-instance/webhook/ysquared-booking
-N8N_WEBHOOK_SECRET=optional-shared-secret
+Landing page -> POST /api/book-service -> Supabase
+                                      -> bookings + automation_events
+Supabase Database Webhook -> n8n -> booking lookup -> notifications + calendar
 ```
 
-If `N8N_WEBHOOK_SECRET` is set, the site sends:
+Supabase is the source of truth. The landing page never calls n8n directly in the production flow, so an n8n outage cannot discard a booking.
 
-```text
-x-webhook-secret: your-secret
-```
+## Booking-created workflow
+
+1. **Webhook**: receive the Supabase Database Webhook for an `automation_events` insert.
+2. **IF**: continue only when `record.event_type` equals `booking.created`.
+3. **Supabase - Get booking**: fetch `bookings`, `customers`, and any active assignment using `record.booking_id`.
+4. **Technician availability**: query active technician calendars, then check Google Calendar availability.
+5. **Assign technician**: insert `booking_assignments` and update `bookings.status` to `assigned`.
+6. **Google Calendar**: create the appointment on the assigned technician's calendar.
+7. **Notifications**: send a customer confirmation and an admin notification.
+8. **Supabase - Update automation event**: set `processed_at` and store the n8n execution ID.
+
+## Other workflows
+
+- **24-hour reminder**: scheduled workflow reads unprocessed `reminders` due within the next 24 hours, sends the reminder, then marks it sent.
+- **1-hour reminder**: same pattern for jobs due within the next hour.
+- **Completion and review**: when staff updates a booking to `completed`, create a review request and send it after the selected delay.
+
+## n8n credentials
+
+Create these as n8n credentials, not as node text values:
+
+- Supabase service-role connection for server-side reads and writes
+- Google Calendar OAuth for each technician or a delegated shared-calendar account
+- Gmail/Resend/SMTP for confirmation and admin messages
+
+## Supabase Database Webhook
+
+Create the webhook in Supabase after activating the n8n workflow:
+
+- Table: `automation_events`
+- Event: `INSERT`
+- Target URL: the **Production URL** shown by n8n's Webhook node
+- Include a secret header, for example `x-ysquared-webhook-secret`
+
+Store the matching secret only in n8n credentials. Do not expose it to the browser or use a `NEXT_PUBLIC_` variable.
+
+## Local testing
+
+For local n8n, use the Webhook node's test URL while the workflow is listening. For production, activate the workflow and use its production URL in Supabase.

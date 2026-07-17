@@ -1,47 +1,71 @@
 import { NextResponse } from "next/server";
-import { contactFormSchema } from "@/lib/contact-schema";
+import { ZodError } from "zod";
+import { contactFormSchema, type ContactFormValues } from "@/lib/contact-schema";
+import { supabaseAdmin } from "@/lib/supabase-admin";
 
-const webhookUrl = process.env.N8N_WEBHOOK_URL;
-const webhookSecret = process.env.N8N_WEBHOOK_SECRET;
+function buildNotes(values: ContactFormValues) {
+  const notes = [values.additionalNotes, values.message].filter(Boolean).join("\n");
+  return notes.trim();
+}
 
-export async function POST(request: Request) {
-  if (!webhookUrl) {
-    return NextResponse.json(
-      { message: "Booking webhook is not configured yet. Add N8N_WEBHOOK_URL in Vercel." },
-      { status: 503 },
-    );
+function mapUnitCount(numberOfAircons?: number) {
+  if (!numberOfAircons || Number.isNaN(numberOfAircons)) {
+    return 1;
   }
 
-  try {
-    const payload = contactFormSchema.parse(await request.json());
+  return Math.max(1, Math.floor(numberOfAircons));
+}
 
-    const webhookResponse = await fetch(webhookUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...(webhookSecret ? { "x-webhook-secret": webhookSecret } : {}),
-      },
-      body: JSON.stringify({
-        ...payload,
-        source: "ysquared-landing-page",
-        submittedAt: new Date().toISOString(),
-      }),
-      signal: AbortSignal.timeout(15000),
-      cache: "no-store",
+export async function POST(request: Request) {
+  try {
+    const values = contactFormSchema.parse(await request.json());
+    const normalizedPhone = values.phone.replace(/\D/g, "");
+    const normalizedEmail = values.email?.trim().toLowerCase() || null;
+    const parsedNumberOfAircons =
+      typeof values.numberOfAircons === "string" ? Number.parseInt(values.numberOfAircons, 10) : undefined;
+    const bookingPayload = {
+      full_name: values.name.trim(),
+      mobile_number: normalizedPhone,
+      email: normalizedEmail,
+      complete_address: values.address.trim(),
+      google_map_pin: values.googleMapPin?.trim() || null,
+      service_type: values.serviceNeeded.trim(),
+      number_of_aircons: mapUnitCount(Number.isNaN(parsedNumberOfAircons ?? Number.NaN) ? undefined : parsedNumberOfAircons),
+      preferred_date: values.preferredDate,
+      preferred_time: values.preferredTime?.trim() || null,
+      additional_notes: buildNotes(values),
+      source: "ysquared-landing-page",
+    };
+
+    if (!supabaseAdmin) {
+      return NextResponse.json(
+        { message: "Booking storage is not configured yet. Add Supabase env vars in Vercel." },
+        { status: 503 },
+      );
+    }
+
+    const { data, error } = await supabaseAdmin.rpc("create_booking_request", {
+      payload: bookingPayload,
     });
 
-    if (!webhookResponse.ok) {
+    if (error) {
       return NextResponse.json(
-        { message: "Webhook request failed. Please check your n8n workflow." },
+        {
+          message: "Unable to store booking in Supabase. Please check your database setup.",
+          detail: error.message,
+        },
         { status: 502 },
       );
     }
 
+    const bookingRow = Array.isArray(data) ? data[0] : data;
+
     return NextResponse.json({
-      message: "Booking request sent successfully.",
+      message: "Booking request saved to Supabase successfully.",
+      bookingId: bookingRow?.booking_id ?? null,
     });
   } catch (error) {
-    if (error instanceof Error && error.name === "ZodError") {
+    if (error instanceof ZodError) {
       return NextResponse.json(
         { message: "Please review the form fields and try again." },
         { status: 400 },

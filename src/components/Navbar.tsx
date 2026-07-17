@@ -1,9 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { Menu, PhoneCall } from "lucide-react";
 import { useState } from "react";
+import { BrandMark } from "@/components/BrandMark";
 import { CTAButton } from "@/components/CTAButton";
 import { siteConfig } from "@/lib/site";
 import { cn } from "@/lib/utils";
@@ -23,20 +23,7 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-[#081227]/78 backdrop-blur-2xl">
       <div className="section-shell flex h-20 items-center justify-between gap-6">
-        <Link href="#" className="flex items-center gap-3">
-          <Image
-            src="/assets/images/logo.jpg"
-            alt={siteConfig.shortName}
-            width={244}
-            height={68}
-            priority
-            className="h-10 w-auto rounded-sm md:h-11 xl:h-12"
-          />
-          <div>
-            <p className="text-sm font-semibold text-white md:text-base">{siteConfig.shortName}</p>
-            <p className="text-[11px] text-[#9fb0d1] md:text-xs">Airconditioning Services</p>
-          </div>
-        </Link>
+        <BrandMark priority />
 
         <nav className="hidden items-center gap-8 xl:flex">
           {navItems.map((item) => (
