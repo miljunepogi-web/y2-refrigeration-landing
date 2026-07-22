@@ -20,7 +20,7 @@ import {
   unitCountOptions,
   urgencyOptions,
 } from "@/lib/content";
-import { contactFormSchema, type ContactFormValues } from "@/lib/contact-schema";
+import { contactFormSchema, type ContactFormInput, type ContactFormValues } from "@/lib/contact-schema";
 import { siteConfig } from "@/lib/site";
 
 export function ContactForm() {
@@ -34,7 +34,7 @@ export function ContactForm() {
     setValue,
     reset,
     formState: { errors, isSubmitSuccessful, isSubmitting },
-  } = useForm<ContactFormValues>({
+  } = useForm<ContactFormInput, unknown, ContactFormValues>({
     resolver: zodResolver(contactFormSchema),
     defaultValues: {
       name: "",

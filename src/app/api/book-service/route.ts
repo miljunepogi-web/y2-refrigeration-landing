@@ -19,6 +19,20 @@ function mapUnitCount(numberOfAircons?: number) {
   return Math.max(1, Math.floor(numberOfAircons));
 }
 
+function normalizePhilippineMobile(phone: string) {
+  const digits = phone.replace(/\D/g, "");
+
+  if (digits.startsWith("63") && digits.length === 12) {
+    return `0${digits.slice(2)}`;
+  }
+
+  if (digits.startsWith("9") && digits.length === 10) {
+    return `0${digits}`;
+  }
+
+  return digits;
+}
+
 async function forwardToLegacyWebhook(payload: Record<string, unknown>) {
   if (!legacyWebhookUrl) {
     return NextResponse.json(
@@ -51,7 +65,7 @@ async function forwardToLegacyWebhook(payload: Record<string, unknown>) {
 export async function POST(request: Request) {
   try {
     const values = contactFormSchema.parse(await request.json());
-    const normalizedPhone = values.phone.replace(/\D/g, "");
+    const normalizedPhone = normalizePhilippineMobile(values.phone);
     const normalizedEmail = values.email?.trim().toLowerCase() || null;
     const parsedNumberOfAircons =
       typeof values.numberOfAircons === "string" ? Number.parseInt(values.numberOfAircons, 10) : undefined;
@@ -61,6 +75,7 @@ export async function POST(request: Request) {
       email: normalizedEmail,
       complete_address: values.address.trim(),
       google_map_pin: values.googleMapPin?.trim() || null,
+      aircon_type: values.airconType.trim(),
       service_type: values.serviceNeeded.trim(),
       number_of_aircons: mapUnitCount(Number.isNaN(parsedNumberOfAircons ?? Number.NaN) ? undefined : parsedNumberOfAircons),
       preferred_date: values.preferredDate,
@@ -83,8 +98,7 @@ export async function POST(request: Request) {
     if (error) {
       return NextResponse.json(
         {
-          message: "Unable to store booking in Supabase. Please check your database setup.",
-          detail: error.message,
+          message: "Unable to store booking right now. Please try again in a moment.",
         },
         { status: 502 },
       );
